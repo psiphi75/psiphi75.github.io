@@ -330,7 +330,13 @@ const WorkUnit = require('../lib/WorkUnit');
 // work it needs to be served with a content-type of application/wasm,
 // which isn't always the case (eg with php -S), so we remove for now:
 delete WebAssembly.instantiateStreaming;
-
+// const buffer = new Uint8ClampedArray(constants.SQUARE_SIZE * constants.WIDTH * 4);
+// for (let i = 0; i < buffer.length; i += 4) {
+//   buffer[i] = Math.random() * 128;
+//   buffer[i + 1] = Math.random() * 128;
+//   buffer[i + 2] = Math.random() * 128;
+//   buffer[i + 3] = 255;
+// }
 rayTracer('./rust_web_rtrt_bg.wasm').then(
   () => {
     const { RayTracer, wasm } = rayTracer;
@@ -360,15 +366,9 @@ rayTracer('./rust_web_rtrt_bg.wasm').then(
     }
 
     function raytrace(workUnit) {
-      const cellsPtr = rt.render(workUnit.message.stripId);
-      // this is cloned as it is posted back, from the worker so we don't
-      // have to worry about the WASM memory changing under our feet:
-      workUnit.message.buffer = new Uint8ClampedArray(
-        wasm.memory.buffer,
-        cellsPtr,
-        constants.SQUARE_SIZE * constants.WIDTH * 4
-      );
-      self.postMessage(workUnit.toObject());
+      workUnit.message.buffer = new Uint8Array(constants.SQUARE_SIZE * constants.WIDTH * 4);
+      rt.render(workUnit.message.stripId, workUnit.message.buffer);
+      self.postMessage(workUnit.toObject(), [workUnit.message.buffer.buffer]);
       handleNext();
     }
 
@@ -408,6 +408,23 @@ rayTracer('./rust_web_rtrt_bg.wasm').then(
     var wasm;
     const __exports = {};
 
+
+    let cachegetUint8Memory = null;
+    function getUint8Memory() {
+        if (cachegetUint8Memory === null || cachegetUint8Memory.buffer !== wasm.memory.buffer) {
+            cachegetUint8Memory = new Uint8Array(wasm.memory.buffer);
+        }
+        return cachegetUint8Memory;
+    }
+
+    let WASM_VECTOR_LEN = 0;
+
+    function passArray8ToWasm(arg) {
+        const ptr = wasm.__wbindgen_malloc(arg.length * 1);
+        getUint8Memory().set(arg, ptr / 1);
+        WASM_VECTOR_LEN = arg.length;
+        return ptr;
+    }
 
     function freeRayTracer(ptr) {
 
@@ -463,23 +480,26 @@ rayTracer('./rust_web_rtrt_bg.wasm').then(
         /**
         * Render the scene.  self will update the data object that was provided.
         * @param {number} arg0
-        * @returns {number}
+        * @param {Uint8Array} arg1
+        * @returns {void}
         */
-        render(arg0) {
-            return wasm.raytracer_render(this.ptr, arg0);
+        render(arg0, arg1) {
+            const ptr1 = passArray8ToWasm(arg1);
+            const len1 = WASM_VECTOR_LEN;
+            try {
+                return wasm.raytracer_render(this.ptr, arg0, ptr1, len1);
+
+            } finally {
+                arg1.set(getUint8Memory().subarray(ptr1 / 1, ptr1 / 1 + len1));
+                wasm.__wbindgen_free(ptr1, len1 * 1);
+
+            }
+
         }
     }
     __exports.RayTracer = RayTracer;
 
     let cachedTextDecoder = new TextDecoder('utf-8');
-
-    let cachegetUint8Memory = null;
-    function getUint8Memory() {
-        if (cachegetUint8Memory === null || cachegetUint8Memory.buffer !== wasm.memory.buffer) {
-            cachegetUint8Memory = new Uint8Array(wasm.memory.buffer);
-        }
-        return cachegetUint8Memory;
-    }
 
     function getStringFromWasm(ptr, len) {
         return cachedTextDecoder.decode(getUint8Memory().subarray(ptr, ptr + len));

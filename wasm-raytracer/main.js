@@ -55,6 +55,14 @@ class AbruptWorker {
     if (this.remainingWork + 1.0 > MAX_WORK_UNIT_QUEUE) {
       throw new Error('Cannot handle more than one unit of work');
     }
+    // const obj = workUnit.toObject();
+    // if (obj.message.buffer) {
+    //   // var data = new Uint8Array(500 * 1024 * 1024);
+    //   // this.worker.postMessage(data, [data.buffer]);
+    //   this.worker.postMessage(obj, [obj.message.buffer.buffer]);
+    // } else {
+    //   this.worker.postMessage(obj);
+    // }
     this.worker.postMessage(workUnit.toObject());
     this.remainingWork += 1.0;
     return this;
@@ -247,6 +255,7 @@ module.exports = WorkUnit;
 'use strict';
 
 const Abrupt = require('./lib/Abrupt.js');
+// const constants = require('./common/Constants.js');
 
 function ManageRayTracing(numWorkers, isPaused, numStrips, depth, images, renderCallback, workerUri) {
   let activeImage = 0;
@@ -257,6 +266,8 @@ function ManageRayTracing(numWorkers, isPaused, numStrips, depth, images, render
       type: 'raytrace',
       stripId,
       imgId,
+      // // This will be a shared buffer
+      // buffer: new Uint8ClampedArray(constants.SQUARE_SIZE * constants.WIDTH * 4),
     }));
   const renderWorkUnits = {
     0: createWorkUnitsFn(0),
