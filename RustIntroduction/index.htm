@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Title</title>
+    <meta charset="utf-8" />
+    <style>
+      @import url(font/AlfaSlabOne-Regular.latin.woff2);
+      @import url(font/FiraSans-Regular.latin.woff2);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Sans:400, 700, 400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400, 700, 400italic);
+
+      body {
+        font-family: 'Fira Sans', sans-serif;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: 'Alfa Slab One', serif;
+        font-weight: 800;
+        z-index: 999999;
+        position: relative;
+        letter-spacing: 1px;
+        line-height: 1em;
+      }
+      .remark-slide-content h1 {
+        font-size: 96px;
+      }
+      .remark-code,
+      .remark-inline-code {
+        font-family: 'Ubuntu Mono';
+        line-height: 1.5em;
+      }
+      .remark-slide-content {
+        line-height: 2em;
+        font-size: 30px;
+      }
+      .small body {
+        font-size: 0.5em;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+    <script>
+      var slideshow = remark.create({
+        sourceUrl: 'rust-intro.md',
+        ratio: '16:9',
+        slideNumberFormat: ''
+      });
+    </script>
+  </body>
+</html>
