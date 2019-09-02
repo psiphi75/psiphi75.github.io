@@ -804,6 +804,8 @@ fn main() {
 }
 ```
 
+---
+
 ## You can borrow values many times (immutably)
 
 ```Rust
