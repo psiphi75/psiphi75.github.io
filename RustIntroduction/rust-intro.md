@@ -1,112 +1,141 @@
 class: center, middle
 
-# Introduction to Rust
+# Rust Error Handling and Tests
 
 Simon Werner
 
 ---
 
-# Agenda
+## Error Handling
 
-1. What is Rust?
-2. Why Rust?
-3. Getting Started
-4. The basics
-5. Ownership and borrowing
+.left[![Left-aligned image](img/Errors.gif)]
 
 ---
 
-## What is Rust?
+## Error Handling
 
-.left[![Left-aligned image](img/Rust_logo.png)]
+- Even Rust needs to handle errors.
+- Two types of errors:
 
-- Systems programming language
-- Version 1.0 around since 2015
-
-???
-
-- System languages are things like Kernels, libraries and the foundation of what is used to build applications.
-- First appeared on 7 July 2010; 9 years ago
+  - Recoverable
+  - Unrecoverable
 
 ---
 
-## Rust's Features
+## Unrecoverable Errors
 
-- Compiled using LLVM
-- Runs on bare metal (no VM required)
-- Memory safe
-- No garbage collection
-- Ownership model: values have unique owner
-- Traits: similar to type classes (Haskell)
-- Zero cost abstractions
+A panic will unwind the program:
 
-???
-
-- Memory safe: no null pointers, no dangling references, no data races.
-
----
-
-### Zero cost abstractions
-
-_"What you don't use, you don't pay for. And further: What you do use, you couldn't hand code any better."_
-
--- Stroustrup
-
----
-
-### Zero cost abstractions
+- Walk back up the stack
+- Clean up data from each function
 
 ```Rust
-  // Functional
-  let acc: u32 = (0..).map(|n| n * n)
-                      .take_while(|&n| n < upper)
-                      .filter(|n| is_odd(*n))
-                      .sum();
-
-
-
-
-
-
-
-
-
-
-
-
+fn main() {
+  panic!("crash and burn");
+}
 ```
-
-<!-- .left[![Left-aligned image](img/ZeroCostAbstraction.png)] -->
-<!-- src: https://fr.slideshare.net/yann_s/introduction-to-rust-a-lowlevel-language-with-highlevel-abstractions -->
 
 ---
 
-### Zero cost abstractions
+### Unrecoverable Errors
+
+Your program will panic in some cases.
 
 ```Rust
-  // Functional
-  let acc: u32 = (0..).map(|n| n * n)
-                      .take_while(|&n| n < upper)
-                      .filter(|n| is_odd(*n))
-                      .sum();
+fn main() {
+  let v = vec![1, 2, 3];
 
-  // Iterative
-  let mut acc = 0;
-  for n in 0.. {
-    let n_squared = n * n;
-
-    if n_squared >= upper {
-      break;
-    } else if is_odd(n_squared) {
-      acc += n_squared;
-    }
-  }
+  v[99];
+}
 ```
 
-???
+```text
+$ cargo run
+   Compiling panic v0.1.0 (file:///projects/panic)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.27s
+     Running `target/debug/panic`
+thread 'main' panicked at 'index out of bounds: the len is 3 but the index is 99', libcore/slice/mod.rs:2448:10
+note: Run with `RUST_BACKTRACE=1` for a backtrace.
+```
 
-- The functional approach, in general, is easier to understand.
-- The functional approach, in this case, is faster.
+---
+
+### Unrecoverable Errors
+
+Can print the stack trace using RUST_BACKTRACE=1.
+
+```text
+$ RUST_BACKTRACE=1 cargo run
+    Finished dev [unoptimized + debuginfo] target(s) in 0.00s
+     Running `target/debug/panic`
+thread 'main' panicked at 'index out of bounds: the len is 3 but the index is 99', libcore/slice/mod.rs:2448:10
+stack backtrace:
+   0: std::sys::unix::backtrace::tracing::imp::unwind_backtrace
+             at libstd/sys/unix/backtrace/tracing/gcc_s.rs:49
+   1: std::sys_common::backtrace::print
+             at libstd/sys_common/backtrace.rs:71
+             at libstd/sys_common/backtrace.rs:59
+   2: std::panicking::default_hook::{{closure}}
+             at libstd/panicking.rs:211
+   3: std::panicking::default_hook
+             at libstd/panicking.rs:227
+   4: <std::panicking::begin_panic::PanicPayload<A> as core::panic::BoxMeUp>::get
+             at libstd/panicking.rs:476
+   5: std::panicking::continue_panic_fmt
+             at libstd/panicking.rs:390
+   6: std::panicking::try::do_call
+             at libstd/panicking.rs:325
+   7: core::ptr::drop_in_place
+             at libcore/panicking.rs:77
+   8: core::ptr::drop_in_place
+             at libcore/panicking.rs:59
+   9: <usize as core::slice::SliceIndex<[T]>>::index
+             at libcore/slice/mod.rs:2448
+  10: core::slice::<impl core::ops::index::Index<I> for [T]>::index
+             at libcore/slice/mod.rs:2316
+  11: <alloc::vec::Vec<T> as core::ops::index::Index<I>>::index
+             at liballoc/vec.rs:1653
+  12: panic::main
+             at src/main.rs:4
+  13: std::rt::lang_start::{{closure}}
+             at libstd/rt.rs:74
+  14: std::panicking::try::do_call
+             at libstd/rt.rs:59
+             at libstd/panicking.rs:310
+  15: macho_symbol_search
+             at libpanic_unwind/lib.rs:102
+  16: std::alloc::default_alloc_error_hook
+             at libstd/panicking.rs:289
+             at libstd/panic.rs:392
+             at libstd/rt.rs:58
+  17: std::rt::lang_start
+             at libstd/rt.rs:74
+  18: panic::main
+```
+
+---
+
+### NULL
+
+_"I call it my billion-dollar mistake. It was the invention of the null reference in 1965."_
+
+[Tony Hoare, 2009](https://en.wikipedia.org/wiki/Tony_Hoare)
+
+### Why is NULL bad?
+
+This is valid code in C:
+
+```C
+
+int *load_data(void) {
+  return NULL;
+}
+
+void main() {
+  int data = load_data()
+  printf("%d\n", data[0]);
+}
+```
 
 ---
 
