@@ -10534,9 +10534,9 @@ var $author$project$AudioPlayer$new = F2(
 	});
 var $author$project$Main$newPlayerGroup = function (tag) {
 	return {
-		instrumentals: A2($author$project$AudioPlayer$new, tag + '-mix2', tag + '/mix2.mp3'),
-		original: A2($author$project$AudioPlayer$new, tag + '-original', tag + '/original.mp3'),
-		vocals: A2($author$project$AudioPlayer$new, tag + '-mix1', tag + '/mix1.mp3')
+		mix1: A2($author$project$AudioPlayer$new, tag + '-mix1', tag + '/mix1.mp3'),
+		mix2: A2($author$project$AudioPlayer$new, tag + '-mix2', tag + '/mix2.mp3'),
+		original: A2($author$project$AudioPlayer$new, tag + '-original', tag + '/original.mp3')
 	};
 };
 var $author$project$Main$init = function (_v0) {
@@ -10552,14 +10552,14 @@ var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
 var $author$project$Main$SampleAudioMsg = function (a) {
 	return {$: 'SampleAudioMsg', a: a};
 };
-var $author$project$Main$Instrumentals = function (a) {
-	return {$: 'Instrumentals', a: a};
+var $author$project$Main$Mix1 = function (a) {
+	return {$: 'Mix1', a: a};
+};
+var $author$project$Main$Mix2 = function (a) {
+	return {$: 'Mix2', a: a};
 };
 var $author$project$Main$Original = function (a) {
 	return {$: 'Original', a: a};
-};
-var $author$project$Main$Vocals = function (a) {
-	return {$: 'Vocals', a: a};
 };
 var $elm$core$Debug$log = _Debug_log;
 var $author$project$AudioPlayer$outbound = _Platform_outgoingPort(
@@ -10656,26 +10656,26 @@ var $author$project$Main$updatePlayerGroup = F2(
 						model,
 						{original: updatedAudioPlayerModel}),
 					A2($elm$core$Platform$Cmd$map, $author$project$Main$Original, updatedCmd));
-			case 'Vocals':
+			case 'Mix1':
 				var subMsg = msg.a;
-				var _v2 = A2($author$project$AudioPlayer$update, subMsg, model.vocals);
+				var _v2 = A2($author$project$AudioPlayer$update, subMsg, model.mix1);
 				var updatedAudioPlayerModel = _v2.a;
 				var updatedCmd = _v2.b;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{vocals: updatedAudioPlayerModel}),
-					A2($elm$core$Platform$Cmd$map, $author$project$Main$Vocals, updatedCmd));
+						{mix1: updatedAudioPlayerModel}),
+					A2($elm$core$Platform$Cmd$map, $author$project$Main$Mix1, updatedCmd));
 			default:
 				var subMsg = msg.a;
-				var _v3 = A2($author$project$AudioPlayer$update, subMsg, model.instrumentals);
+				var _v3 = A2($author$project$AudioPlayer$update, subMsg, model.mix2);
 				var updatedAudioPlayerModel = _v3.a;
 				var updatedCmd = _v3.b;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{instrumentals: updatedAudioPlayerModel}),
-					A2($elm$core$Platform$Cmd$map, $author$project$Main$Instrumentals, updatedCmd));
+						{mix2: updatedAudioPlayerModel}),
+					A2($elm$core$Platform$Cmd$map, $author$project$Main$Mix2, updatedCmd));
 		}
 	});
 var $author$project$Main$update = F2(
@@ -11817,11 +11817,11 @@ var $author$project$Main$viewPlayerGroup = function (pg) {
 				A2(
 				$elm$html$Html$map,
 				$author$project$Main$SampleAudioMsg,
-				A2($author$project$Main$viewPlayer, pg.vocals, $author$project$Main$Vocals)),
+				A2($author$project$Main$viewPlayer, pg.mix1, $author$project$Main$Mix1)),
 				A2(
 				$elm$html$Html$map,
 				$author$project$Main$SampleAudioMsg,
-				A2($author$project$Main$viewPlayer, pg.instrumentals, $author$project$Main$Instrumentals))
+				A2($author$project$Main$viewPlayer, pg.mix2, $author$project$Main$Mix2))
 			]));
 };
 var $author$project$Main$viewDemo = function (sample) {
@@ -11870,4 +11870,4 @@ var $author$project$Main$main = $elm$browser$Browser$element(
 		view: $author$project$Main$view
 	});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Media.State":{"args":[],"type":"Internal.Types.State"},"Internal.Types.InternalState":{"args":[],"type":"{ id : Internal.Types.Id, mediaType : Internal.Types.MediaType, playbackStatus : Internal.Types.PlaybackStatus, readyState : Internal.Types.ReadyState, source : String.String, currentTime : Basics.Float, duration : Basics.Float, networkState : Internal.Types.NetworkState, videoWidth : Basics.Int, videoHeight : Basics.Int, buffered : List.List Internal.Types.TimeRange, seekable : List.List Internal.Types.TimeRange, played : List.List Internal.Types.TimeRange, textTracks : List.List Internal.Types.TextTrack }"},"Internal.Types.TextTrack":{"args":[],"type":"{ id : String.String, activeCues : List.List Internal.Types.VTTCue, cues : List.List Internal.Types.VTTCue, kind : Internal.Types.TextTrackKind, inBandMetadataTrackDispatchType : String.String, label : String.String, language : String.String, mode : Internal.Types.TextTrackMode }"},"Internal.Types.TimeRange":{"args":[],"type":"{ start : Basics.Float, end : Basics.Float }"},"Internal.Types.VTTCue":{"args":[],"type":"{ text : String.String, startTime : Basics.Float, endTime : Basics.Float }"}},"unions":{"Main.Msg":{"args":[],"tags":{"SampleAudioMsg":["Main.PlayerGroupMsg"]}},"Main.PlayerGroupMsg":{"args":[],"tags":{"Original":["AudioPlayer.Msg"],"Vocals":["AudioPlayer.Msg"],"Instrumentals":["AudioPlayer.Msg"]}},"AudioPlayer.Msg":{"args":[],"tags":{"NoOp":[],"Play":[],"Pause":[],"Seek":["Basics.Float"],"MediaStateUpdate":["Media.State"]}},"Basics.Float":{"args":[],"tags":{"Float":[]}},"Internal.Types.State":{"args":[],"tags":{"State":["Internal.Types.InternalState"]}},"Internal.Types.Id":{"args":[],"tags":{"Id":["String.String"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}},"Internal.Types.MediaType":{"args":[],"tags":{"Audio":[],"Video":[]}},"Internal.Types.NetworkState":{"args":[],"tags":{"Empty":[],"Idle":[],"DataLoading":[],"NoSource":[]}},"Internal.Types.PlaybackStatus":{"args":[],"tags":{"Paused":[],"Playing":[],"Loading":[],"Buffering":[],"Ended":[],"PlaybackError":["Internal.Types.PlaybackError"]}},"Internal.Types.ReadyState":{"args":[],"tags":{"HaveNothing":[],"HaveMetadata":[],"HaveCurrentData":[],"HaveFutureData":[],"HaveEnoughData":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Internal.Types.TextTrackKind":{"args":[],"tags":{"Captions":[],"Chapters":[],"Descriptions":[],"Metadata":[],"Subtitles":[],"Other":["String.String"],"None":[]}},"Internal.Types.TextTrackMode":{"args":[],"tags":{"Disabled":[],"Hidden":[],"Showing":[]}},"Internal.Types.PlaybackError":{"args":[],"tags":{"Aborted":["String.String"],"Network":["String.String"],"Decode":["String.String"],"Unsupported":["String.String"]}}}}})}});}(this));
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Media.State":{"args":[],"type":"Internal.Types.State"},"Internal.Types.InternalState":{"args":[],"type":"{ id : Internal.Types.Id, mediaType : Internal.Types.MediaType, playbackStatus : Internal.Types.PlaybackStatus, readyState : Internal.Types.ReadyState, source : String.String, currentTime : Basics.Float, duration : Basics.Float, networkState : Internal.Types.NetworkState, videoWidth : Basics.Int, videoHeight : Basics.Int, buffered : List.List Internal.Types.TimeRange, seekable : List.List Internal.Types.TimeRange, played : List.List Internal.Types.TimeRange, textTracks : List.List Internal.Types.TextTrack }"},"Internal.Types.TextTrack":{"args":[],"type":"{ id : String.String, activeCues : List.List Internal.Types.VTTCue, cues : List.List Internal.Types.VTTCue, kind : Internal.Types.TextTrackKind, inBandMetadataTrackDispatchType : String.String, label : String.String, language : String.String, mode : Internal.Types.TextTrackMode }"},"Internal.Types.TimeRange":{"args":[],"type":"{ start : Basics.Float, end : Basics.Float }"},"Internal.Types.VTTCue":{"args":[],"type":"{ text : String.String, startTime : Basics.Float, endTime : Basics.Float }"}},"unions":{"Main.Msg":{"args":[],"tags":{"SampleAudioMsg":["Main.PlayerGroupMsg"]}},"Main.PlayerGroupMsg":{"args":[],"tags":{"Original":["AudioPlayer.Msg"],"Mix1":["AudioPlayer.Msg"],"Mix2":["AudioPlayer.Msg"]}},"AudioPlayer.Msg":{"args":[],"tags":{"NoOp":[],"Play":[],"Pause":[],"Seek":["Basics.Float"],"MediaStateUpdate":["Media.State"]}},"Basics.Float":{"args":[],"tags":{"Float":[]}},"Internal.Types.State":{"args":[],"tags":{"State":["Internal.Types.InternalState"]}},"Internal.Types.Id":{"args":[],"tags":{"Id":["String.String"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}},"Internal.Types.MediaType":{"args":[],"tags":{"Audio":[],"Video":[]}},"Internal.Types.NetworkState":{"args":[],"tags":{"Empty":[],"Idle":[],"DataLoading":[],"NoSource":[]}},"Internal.Types.PlaybackStatus":{"args":[],"tags":{"Paused":[],"Playing":[],"Loading":[],"Buffering":[],"Ended":[],"PlaybackError":["Internal.Types.PlaybackError"]}},"Internal.Types.ReadyState":{"args":[],"tags":{"HaveNothing":[],"HaveMetadata":[],"HaveCurrentData":[],"HaveFutureData":[],"HaveEnoughData":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Internal.Types.TextTrackKind":{"args":[],"tags":{"Captions":[],"Chapters":[],"Descriptions":[],"Metadata":[],"Subtitles":[],"Other":["String.String"],"None":[]}},"Internal.Types.TextTrackMode":{"args":[],"tags":{"Disabled":[],"Hidden":[],"Showing":[]}},"Internal.Types.PlaybackError":{"args":[],"tags":{"Aborted":["String.String"],"Network":["String.String"],"Decode":["String.String"],"Unsupported":["String.String"]}}}}})}});}(this));
