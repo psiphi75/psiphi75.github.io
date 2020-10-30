@@ -1,176 +1,5 @@
 class: center, middle
 
-# Rust Error Handling and Tests
-
-Simon Werner
-
----
-
-## Error Handling
-
-.left[![Left-aligned image](img/Errors.gif)]
-
----
-
-## Error Handling
-
-- Even Rust needs to handle errors.
-- Two types of errors:
-
-  - Recoverable
-  - Unrecoverable
-
----
-
-## Unrecoverable Errors
-
-A panic will unwind the program:
-
-- Walk back up the stack
-- Clean up data from each function
-
-```Rust
-fn main() {
-  panic!("crash and burn");
-}
-```
-
----
-
-### Unrecoverable Errors
-
-Your program will panic in some cases.
-
-```Rust
-fn main() {
-  let v = vec![1, 2, 3];
-
-  v[99];
-}
-```
-
-```text
-$ cargo run
-   Compiling panic v0.1.0 (file:///projects/panic)
-    Finished dev [unoptimized + debuginfo] target(s) in 0.27s
-     Running `target/debug/panic`
-thread 'main' panicked at 'index out of bounds: the len is 3 but the index is 99', libcore/slice/mod.rs:2448:10
-note: Run with `RUST_BACKTRACE=1` for a backtrace.
-```
-
----
-
-### Unrecoverable Errors
-
-Can print the stack trace using RUST_BACKTRACE=1.
-
-```text
-$ RUST_BACKTRACE=1 cargo run
-    Finished dev [unoptimized + debuginfo] target(s) in 0.00s
-     Running `target/debug/panic`
-thread 'main' panicked at 'index out of bounds: the len is 3 but the index is 99', libcore/slice/mod.rs:2448:10
-stack backtrace:
-   0: std::sys::unix::backtrace::tracing::imp::unwind_backtrace
-             at libstd/sys/unix/backtrace/tracing/gcc_s.rs:49
-   1: std::sys_common::backtrace::print
-             at libstd/sys_common/backtrace.rs:71
-             at libstd/sys_common/backtrace.rs:59
-   2: std::panicking::default_hook::{{closure}}
-             at libstd/panicking.rs:211
-   3: std::panicking::default_hook
-             at libstd/panicking.rs:227
-   4: <std::panicking::begin_panic::PanicPayload<A> as core::panic::BoxMeUp>::get
-             at libstd/panicking.rs:476
-   5: std::panicking::continue_panic_fmt
-             at libstd/panicking.rs:390
-   6: std::panicking::try::do_call
-             at libstd/panicking.rs:325
-   7: core::ptr::drop_in_place
-             at libcore/panicking.rs:77
-   8: core::ptr::drop_in_place
-             at libcore/panicking.rs:59
-   9: <usize as core::slice::SliceIndex<[T]>>::index
-             at libcore/slice/mod.rs:2448
-  10: core::slice::<impl core::ops::index::Index<I> for [T]>::index
-             at libcore/slice/mod.rs:2316
-  11: <alloc::vec::Vec<T> as core::ops::index::Index<I>>::index
-             at liballoc/vec.rs:1653
-  12: panic::main
-             at src/main.rs:4
-  13: std::rt::lang_start::{{closure}}
-             at libstd/rt.rs:74
-  14: std::panicking::try::do_call
-             at libstd/rt.rs:59
-             at libstd/panicking.rs:310
-  15: macho_symbol_search
-             at libpanic_unwind/lib.rs:102
-  16: std::alloc::default_alloc_error_hook
-             at libstd/panicking.rs:289
-             at libstd/panic.rs:392
-             at libstd/rt.rs:58
-  17: std::rt::lang_start
-             at libstd/rt.rs:74
-  18: panic::main
-```
-
----
-
-### NULL
-
-_"I call it my billion-dollar mistake. It was the invention of the null reference in 1965."_
-
-[Tony Hoare, 2009](https://en.wikipedia.org/wiki/Tony_Hoare)
-
-### Why is NULL bad?
-
-This is valid code in C:
-
-```C
-
-int *load_data(void) {
-  return NULL;
-}
-
-void main() {
-  int data = load_data()
-  printf("%d\n", data[0]);
-}
-```
-
----
-
-### Platform targets
-
-- CLI: Linux, MacOS, Windows
-- WebAssembly
-- Embedded devices:
-  - ARM Cortex-A/M/R
-  - RISC-V
-  - MSP430
-  - Embedded Linux
-- Operating systems (TockOS, Redox OS)
-
----
-
-### Actively use Rust
-
-- Mozilla (since 2016)
-- Dropbox (since 2016)
-- Brave browser
-- Intel developing [parity with C](https://hub.packtpub.com/rust-is-the-future-of-systems-programming-c-is-the-new-assembly-intel-principal-engineer-josh-triplett/)
-- Fire and Emergency NZ
-- Xero
-- CloudFlare <!-- (https://blog.cloudflare.com/cloudflare-workers-as-a-serverless-rust-platform/)-->
-- Amazon: 64 jobs with "Rust" keyword
-
-<!-- src: https://www.rust-lang.org/production/users -->
-
-???
-
-- Talk about allowing Linux Kernel drivers to use Rust
-
----
-
 ## Why Rust?
 
 ---
@@ -183,6 +12,39 @@ void main() {
 
 ---
 
+### Platform targets
+
+-   CLI: Linux, MacOS, Windows
+-   WebAssembly
+-   Embedded devices:
+    -   ARM Cortex-A/M/R
+    -   RISC-V
+    -   MSP430
+    -   Embedded Linux
+-   Operating systems (TockOS, Redox OS)
+
+---
+
+### Actively use Rust
+
+-   Amazon (Firecracker)
+-   Mozilla (Firefox, since 2016)
+-   Dropbox (since 2016)
+-   Brave browser
+-   Intel developing [parity with C](https://hub.packtpub.com/rust-is-the-future-of-systems-programming-c-is-the-new-assembly-intel-principal-engineer-josh-triplett/)
+-   Fire and Emergency NZ
+-   Xero
+-   CloudFlare <!-- (https://blog.cloudflare.com/cloudflare-workers-as-a-serverless-rust-platform/)-->
+-   Most Blockchain companies: Centrality, Libra, etc
+
+<!-- src: https://www.rust-lang.org/production/users -->
+
+???
+
+-   Talk about allowing Linux Kernel drivers to use Rust
+
+---
+
 ## Rust's Goals
 
 1. Safety
@@ -191,8 +53,8 @@ void main() {
 
 ???
 
-- Trifector of goals.
-- Let's explore each goal.
+-   Trifector of goals.
+-   Let's explore each goal.
 
 ---
 
@@ -204,10 +66,10 @@ _"70% of all Microsoft patches are for memory-related bugs"_
 
 ???
 
-- I think examples serve well here.
-- This is typical of security related bugs.
-- MS has been looking for safer C/C++ languages for a long time.
-- Heartbleed is an example, it was discovered in 2014 and caused all websites using OpenSSL to be vulnerable to expose senestive information.
+-   I think examples serve well here.
+-   This is typical of security related bugs.
+-   MS has been looking for safer C/C++ languages for a long time.
+-   Heartbleed is an example, it was discovered in 2014 and caused all websites using OpenSSL to be vulnerable to expose senestive information.
 
 ---
 
@@ -215,9 +77,9 @@ _"70% of all Microsoft patches are for memory-related bugs"_
 
 Benchmarks Game:
 
-- 10 toy benchmark programs.
-- it's a game, with ballpark figures.
-- Show "how many times slower" a program is.
+-   10 toy benchmark programs.
+-   it's a game, with ballpark figures.
+-   Show "how many times slower" a program is.
 
 ---
 
@@ -229,7 +91,7 @@ Benchmarks Game:
 
 ???
 
-- Rust is in the same ballpark as C/C++. C is universally accepted as the fastest popular programming language.
+-   Rust is in the same ballpark as C/C++. C is universally accepted as the fastest popular programming language.
 
 ---
 
@@ -241,7 +103,7 @@ Benchmarks Game:
 
 ???
 
-- Enlarge
+-   Enlarge
 
 ---
 
@@ -253,7 +115,7 @@ Benchmarks Game:
 
 ???
 
-- Enhance
+-   Enhance
 
 ---
 
@@ -269,8 +131,8 @@ Benchmarks Game:
 
 ???
 
-- Computers are getting faster, right!?
-- Not quite, let's have a look
+-   Computers are getting faster, right!?
+-   Not quite, let's have a look
 
 ---
 
@@ -280,8 +142,8 @@ Benchmarks Game:
 
 ???
 
-- 1984 - IBM XT 4.77 MHz
-- Look at that curve, what it be like in 2020 if it never stopped increasing.
+-   1984 - IBM XT 4.77 MHz
+-   Look at that curve, what it be like in 2020 if it never stopped increasing.
 
 ---
 
@@ -291,8 +153,8 @@ Benchmarks Game:
 
 ???
 
-- Single threaded performance improving slowly.
-- CPUs are getting more complex.
+-   Single threaded performance improving slowly.
+-   CPUs are getting more complex.
 
 ---
 
@@ -300,7 +162,7 @@ Benchmarks Game:
 
 ???
 
-- Let's have a look at some Rust performance examples.
+-   Let's have a look at some Rust performance examples.
 
 ---
 
@@ -316,7 +178,7 @@ background-image: url(img/ProductionDeployment-CPU.png)
 
 ???
 
-- See that CPU usage decreases from about 115% down to 15%.
+-   See that CPU usage decreases from about 115% down to 15%.
 
 ---
 
@@ -324,9 +186,9 @@ background-image: url(img/ProductionDeployment-Mem.png)
 
 ???
 
-- Similar goes for memory.
-- It's surprising how well Node.js manages memory.
-- There are many such examples.
+-   Similar goes for memory.
+-   It's surprising how well Node.js manages memory.
+-   There are many such examples.
 
 ---
 
@@ -334,51 +196,51 @@ background-image: url(img/ProductionDeployment-Mem.png)
 
 Concurrency in Rust:
 
-- Lightweight threads don't share heap memory
-- Use channels, mutexes, atomic primitives
-- The type system avoids all data races
+-   Lightweight threads don't share heap memory
+-   Use channels, mutexes, atomic primitives
+-   The type system avoids all data races
 
 ???
 
-- If you want safety and concurrency, Rust beats all other languages, hands down.
+-   If you want safety and concurrency, Rust beats all other languages, hands down.
 
 ---
 
 ## Rust makes concurrency simple
 
-- Concurrency in other languages is difficult
-  - Memory leaks
-  - Weird bugs
-- Rust: fearless concurrency
+-   Concurrency in other languages is difficult
+    -   Memory leaks
+    -   Weird bugs
+-   Rust: fearless concurrency
 
 ???
 
-- `valgrind` anyone?
+-   `valgrind` anyone?
 
 ---
 
 ## Examples
 
-- Google Chrome: 2x C++ re-writes - failed
-- Opera: Presto C++ re-write - failed
-- Firefox: 2x C++ re-write attempts - success with Rust
-- Brave Browser: Re-write from C++ to Rust, _"69x faster on average"_
+-   Google Chrome: 2x C++ re-writes - failed
+-   Opera: Presto C++ re-write - failed
+-   Firefox: 2x C++ re-write attempts - success with Rust
+-   Brave Browser: Re-write from C++ to Rust, _"69x faster on average"_
 
 ???
 
-- Google Chrome:
+-   Google Chrome:
 
-  - attempted multiple refactors of C/C++ layout(?) engine.
-  - Gave up, they are not using Rust.
+    -   attempted multiple refactors of C/C++ layout(?) engine.
+    -   Gave up, they are not using Rust.
 
-- Opera - presto engine
-- Mozilla Firefox:
+-   Opera - presto engine
+-   Mozilla Firefox:
 
-  - attempted CSS code refactor in 2009 and 2011, in C/C++.
-  - Achieved it in 2017 with Rust (Stylo).
+    -   attempted CSS code refactor in 2009 and 2011, in C/C++.
+    -   Achieved it in 2017 with Rust (Stylo).
 
-- Don't expect 69x speed improvement to be typical, it's more likely to have little or no improvement in performance.
-- It doesn't matter about the language
+-   Don't expect 69x speed improvement to be typical, it's more likely to have little or no improvement in performance.
+-   It doesn't matter about the language
 
 ---
 
@@ -386,20 +248,20 @@ Concurrency in Rust:
 
 ???
 
-- Enough talk about Rust, where do you start?
-- What does it look and fell like?
+-   Enough talk about Rust, where do you start?
+-   What does it look and fell like?
 
 ---
 
 ## Getting Started
 
-- Go to https://rustup.rs/
+-   Go to https://rustup.rs/
 
-  - Linux/MacOS: `curl -sSf https://sh.rustup.rs | sh`
-  - Windows: [rustup.rs/](https://rustup.rs)
+    -   Linux/MacOS: `curl -sSf https://sh.rustup.rs | sh`
+    -   Windows: [rustup.rs/](https://rustup.rs)
 
-- https://areweideyet.com/
-  - Get your supported packages
+-   https://areweideyet.com/
+    -   Get your supported packages
 
 ---
 
@@ -424,11 +286,11 @@ rustc hello.rs
 
 ### Cargo
 
-- Like npm, pip
-- Downloads your package’s dependencies from [crates.io](https://crates.io)
-- Builds your package
-- makes distributable packages
-- Publish your package to [crates.io](https://crates.io)
+-   Like npm, pip
+-   Downloads your package’s dependencies from [crates.io](https://crates.io)
+-   Builds your package
+-   makes distributable packages
+-   Publish your package to [crates.io](https://crates.io)
 
 ---
 
@@ -442,17 +304,17 @@ cargo run
 
 ???
 
-- Look at `target/debug/`: `demo` is 2.4 MB
+-   Look at `target/debug/`: `demo` is 2.4 MB
 
 ---
 
 ## The basics
 
-- Variables and mutability
-- Data types
-- Functions
-- Comments
-- Control Flow
+-   Variables and mutability
+-   Data types
+-   Functions
+-   Comments
+-   Control Flow
 
 ---
 
@@ -488,10 +350,10 @@ fn main() {
 
 ### The basics: Data Types
 
-- Implicit typing
-- Scalars: integer, float, boolean and character (Unicode Scalar Value)
-- Compound: tuple, array
-- Strings & vectors: in standard library
+-   Implicit typing
+-   Scalars: integer, float, boolean and character (Unicode Scalar Value)
+-   Compound: tuple, array
+-   Strings & vectors: in standard library
 
 ---
 
@@ -728,9 +590,9 @@ fn main() {
 
 Three rules of ownership:
 
-- Each value in Rust has a variable that’s called its owner.
-- There can only be one owner at a time.
-- When the owner goes out of scope, the value will be dropped.
+-   Each value in Rust has a variable that’s called its owner.
+-   There can only be one owner at a time.
+-   When the owner goes out of scope, the value will be dropped.
 
 ---
 
@@ -784,10 +646,10 @@ background-image: url(img/OwnershipError.png)
 
 ## Ownership is Rust's magic sword
 
-- You get memory safe guarantees without a GC.
-- Elimitates data races accross threads.
-- You know what a function can do with it's arguments.
-- It's a new paradigm, so requires a little effort to master.
+-   You get memory safe guarantees without a GC.
+-   Elimitates data races accross threads.
+-   You know what a function can do with it's arguments.
+-   It's a new paradigm, so requires some effort to master.
 
 **Questions so far?**
 
@@ -828,7 +690,7 @@ fn main() {
 ```Rust
 fn main() {
   let s = String::from("hello");
-  let t = &s;                       // 't' borrows 's'
+  let t = &s;                       // `t` borrows `s`
   println!("s: {}, t: {}", s, t);
 }
 ```
@@ -842,7 +704,7 @@ fn main() {
   let s = String::from("hello");
   let t = &s;
   let u = &s;
-  let v = &t;                       // 'v' borrows 't'
+  let v = &t;                       // `v` borrows `t`
   println!("{}, {}, {}, {}", s, t, u, v);
 }
 ```
@@ -854,8 +716,147 @@ fn main() {
 ```Rust
 fn main() {
   let s = String::from("hello");
-  let t = &s[0..3];                  // 't' borrows "hel" from 's'
-  println!("s: {}, t: {}", s, t);
+  let t = &s[0..3];                  // `t` borrows "hel" from `s`
+  println!("s: {}, t: {}", s, t);    // "s: hello, t: hel"
+}
+```
+
+---
+
+# Rust Error Handling and Tests
+
+Simon Werner
+
+---
+
+## Error Handling
+
+.left[![Left-aligned image](img/Errors.gif)]
+
+---
+
+## Error Handling
+
+-   Even Rust needs to handle errors.
+-   Two types of errors:
+
+    -   Recoverable
+    -   Unrecoverable
+
+---
+
+## Unrecoverable Errors
+
+A panic will unwind the program:
+
+-   Walk back up the stack
+-   Clean up data from each function
+
+```Rust
+fn main() {
+  panic!("crash and burn");
+}
+```
+
+---
+
+### Unrecoverable Errors
+
+Your program will panic in some cases.
+
+```Rust
+fn main() {
+  let v = vec![1, 2, 3];
+
+  v[99];
+}
+```
+
+```text
+$ cargo run
+   Compiling panic v0.1.0 (file:///projects/panic)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.27s
+     Running `target/debug/panic`
+thread 'main' panicked at 'index out of bounds: the len is 3 but the index is 99', libcore/slice/mod.rs:2448:10
+note: Run with `RUST_BACKTRACE=1` for a backtrace.
+```
+
+---
+
+### Unrecoverable Errors
+
+Can print the stack trace using RUST_BACKTRACE=1.
+
+```text
+$ RUST_BACKTRACE=1 cargo run
+    Finished dev [unoptimized + debuginfo] target(s) in 0.00s
+     Running `target/debug/panic`
+thread 'main' panicked at 'index out of bounds: the len is 3 but the index is 99', libcore/slice/mod.rs:2448:10
+stack backtrace:
+   0: std::sys::unix::backtrace::tracing::imp::unwind_backtrace
+             at libstd/sys/unix/backtrace/tracing/gcc_s.rs:49
+   1: std::sys_common::backtrace::print
+             at libstd/sys_common/backtrace.rs:71
+             at libstd/sys_common/backtrace.rs:59
+   2: std::panicking::default_hook::{{closure}}
+             at libstd/panicking.rs:211
+   3: std::panicking::default_hook
+             at libstd/panicking.rs:227
+   4: <std::panicking::begin_panic::PanicPayload<A> as core::panic::BoxMeUp>::get
+             at libstd/panicking.rs:476
+   5: std::panicking::continue_panic_fmt
+             at libstd/panicking.rs:390
+   6: std::panicking::try::do_call
+             at libstd/panicking.rs:325
+   7: core::ptr::drop_in_place
+             at libcore/panicking.rs:77
+   8: core::ptr::drop_in_place
+             at libcore/panicking.rs:59
+   9: <usize as core::slice::SliceIndex<[T]>>::index
+             at libcore/slice/mod.rs:2448
+  10: core::slice::<impl core::ops::index::Index<I> for [T]>::index
+             at libcore/slice/mod.rs:2316
+  11: <alloc::vec::Vec<T> as core::ops::index::Index<I>>::index
+             at liballoc/vec.rs:1653
+  12: panic::main
+             at src/main.rs:4
+  13: std::rt::lang_start::{{closure}}
+             at libstd/rt.rs:74
+  14: std::panicking::try::do_call
+             at libstd/rt.rs:59
+             at libstd/panicking.rs:310
+  15: macho_symbol_search
+             at libpanic_unwind/lib.rs:102
+  16: std::alloc::default_alloc_error_hook
+             at libstd/panicking.rs:289
+             at libstd/panic.rs:392
+             at libstd/rt.rs:58
+  17: std::rt::lang_start
+             at libstd/rt.rs:74
+  18: panic::main
+```
+
+---
+
+### NULL
+
+_"I call it my billion-dollar mistake. It was the invention of the null reference in 1965."_
+
+[Tony Hoare, 2009](https://en.wikipedia.org/wiki/Tony_Hoare)
+
+### Why is NULL bad?
+
+This is valid code in C:
+
+```C
+
+int *load_data(void) {
+  return NULL;
+}
+
+void main() {
+  int data = load_data()
+  printf("%d\n", data[0]);
 }
 ```
 
@@ -867,35 +868,29 @@ fn main() {
 
 ### Further watching
 
-- [Rust: Putting Ownership to Use](https://www.youtube.com/watch?v=wXoY91w4Agk) (until 15:55)
-- [Intro to Rustlang (Ownership and Borrowing)](https://www.youtube.com/watch?v=y7iSQ3s_yms)
-- [Rust Concurrency Explained](https://youtu.be/Dbytx0ivH7Q?t=385) (from 6:25)
-
----
-
-### Homework
-
-- Complete chapters 1 to 4 of the [_Rust Programming Language_ Book](https://doc.rust-lang.org/stable/book/).
+-   [Rust: Putting Ownership to Use](https://www.youtube.com/watch?v=wXoY91w4Agk) (until 15:55)
+-   [Intro to Rustlang (Ownership and Borrowing)](https://www.youtube.com/watch?v=y7iSQ3s_yms)
+-   [Rust Concurrency Explained](https://youtu.be/Dbytx0ivH7Q?t=385) (from 6:25)
 
 ---
 
 ## Resources
 
-- Learning resources:
+-   Learning resources:
 
-  - [Official Rust book](https://doc.rust-lang.org/stable/book/)
-  - [The Embedded Rust Book](https://rust-embedded.github.io/book/)
-  - [codewars.com](https://www.codewars.com/) - Browser based
-  - [exercism.io](https://exercism.io/) - CLI based
+    -   [Official Rust book](https://doc.rust-lang.org/stable/book/)
+    -   [The Embedded Rust Book](https://rust-embedded.github.io/book/)
+    -   [codewars.com](https://www.codewars.com/) - Browser based
+    -   [exercism.io](https://exercism.io/) - CLI based
 
 ---
 
 ## Rousources
 
-- Help:
+-   Help:
 
-  - [Rust programming forum](https://users.rust-lang.org/)
-  - [Rust-AKL slack](https://rust-akl.slack.com/)
+    -   [Rust programming forum](https://users.rust-lang.org/)
+    -   [Rust-AKL slack](https://rust-akl.slack.com/)
 
 ---
 
@@ -903,10 +898,10 @@ fn main() {
 
 Next Meetup:
 
-- structs and traits
-- enums and pattern matching
-- error handling
-- testing
+-   structs and traits
+-   enums and pattern matching
+-   error handling
+-   testing
 
 ---
 
@@ -916,7 +911,7 @@ Next Meetup:
 
 You are free to:
 
-- Share: copy and redistribute the material in any medium or format.
-- Adapt: remix, transform, and build upon the material.
+-   Share: copy and redistribute the material in any medium or format.
+-   Adapt: remix, transform, and build upon the material.
 
 The licensor cannot revoke these freedoms as long as you follow the license terms.
