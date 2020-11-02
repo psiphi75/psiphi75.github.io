@@ -15,13 +15,13 @@ class: center, middle
 ### Platform targets
 
 -   CLI: Linux, MacOS, Windows
--   WebAssembly
+-   Browser: WebAssembly
 -   Embedded devices:
     -   ARM Cortex-A/M/R
     -   RISC-V
     -   MSP430
     -   Embedded Linux
--   Operating systems (TockOS, Redox OS)
+-   Real Time Operating systems (TockOS, Redox OS)
 
 ---
 
@@ -47,9 +47,9 @@ class: center, middle
 
 ## Rust's Goals
 
-1. Safety
-2. Speed
-3. Concurrency
+1. safe
+1. fast
+1. productive
 
 ???
 
@@ -80,6 +80,7 @@ Benchmarks Game:
 -   10 toy benchmark programs.
 -   it's a game, with ballpark figures.
 -   Show "how many times slower" a program is.
+-   https://benchmarksgame-team.pages.debian.net/benchmarksgame/index.html
 
 ---
 
@@ -147,7 +148,7 @@ Benchmarks Game:
 
 ---
 
-### Single core perf slowing
+### Single core performance
 
 .left[![Left-aligned image](img/SingleThreadedPerf.png)]
 
@@ -260,8 +261,7 @@ Concurrency in Rust:
     -   Linux/MacOS: `curl -sSf https://sh.rustup.rs | sh`
     -   Windows: [rustup.rs/](https://rustup.rs)
 
--   https://areweideyet.com/
-    -   Get your supported packages
+-   [Are we Rust yet?](https://github.com/UgurcanAkkok/AreWeRustYet)
 
 ---
 
